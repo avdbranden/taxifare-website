@@ -2,6 +2,8 @@ import streamlit as st
 import requests
 import datetime as dt
 import pandas as pd
+import pydeck as pdk
+
 
 st.set_page_config(
     page_title="The super duper fare prediction website",
