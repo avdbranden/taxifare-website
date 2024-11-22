@@ -9,15 +9,32 @@ st.set_page_config(
     layout="centered",
     initial_sidebar_state="auto") # collapsed
 
-pickup_address = st.text_input(
-    "Pick-up address: ",
-    value = "John F. Kennedy International Airport"
-    )
+st.title("Taxi Booking App")
+st.markdown("""
+Welcome to the Taxi Booking App. Please provide the details below to book your ride.
+""")
 
-dropoff_address = st.text_input(
-    "Dropoff address: ",
-    value = "10 Wall St, New York, NY 10005, USA"
-    )
+col1, col2 = st.columns(2)
+
+with col1:
+    pickup_address = st.text_input(
+        "Pick-up address: ",
+        value = "John F. Kennedy International Airport"
+        )
+    pickup_datetime = st.date_input(
+        "Pick-up date: ",
+        dt.date(2024, 11, 22)
+        )
+
+with col2:
+    dropoff_address = st.text_input(
+        "Dropoff address: ",
+        value = "10 Wall St, New York, NY 10005, USA"
+        )
+    pickup_hour = st.time_input(
+        "Pick-up time: ",
+        dt.time(8, 45)
+        )
 
 api_key = st.secrets.api_key
 url = "https://maps.googleapis.com/maps/api/geocode/json"
@@ -34,15 +51,6 @@ dropoff_params = {
 
 pickup_response = requests.get(url, pickup_params)
 dropoff_response = requests.get(url, dropoff_params)
-
-pickup_datetime = st.date_input(
-    "Pick-up date: ",
-    dt.date(2014, 7, 6)
-    )
-pickup_hour = st.time_input(
-    "Pick-up time: ",
-    dt.time(8, 45)
-    )
 pickup_time= f"{pickup_datetime} {pickup_hour}"
 
 pickup_longitude = pickup_response.json()["results"][0]["geometry"]["location"]["lng"]
@@ -86,3 +94,23 @@ if st.button('Get fare'):
     st.text("Check your journey 👇")
     df = get_map_data()
     st.map(df)
+    st.text("Have a great ride 👋")
+    st.image("taxi.gif", use_container_width=True)
+
+
+st.markdown("""
+<style>
+    .stTextInput > div > label {
+        font-size: 18px;
+        font-weight: bold;
+    }
+    .stDateInput > div > label {
+        font-size: 18px;
+        font-weight: bold;
+    }
+    .stTimeInput > div > label {
+        font-size: 18px;
+        font-weight: bold;
+    }
+</style>
+""", unsafe_allow_html=True)
