@@ -4,26 +4,41 @@ import datetime
 import pandas as pd
 import numpy as np
 
+pickup_address = st.text_input(
+    "Pick-up address: ",
+    value = "John F. Kennedy International Airport"
+    )
+
+dropoff_address = st.text_input(
+    "Dropoff address: ",
+    value = "10 Wall St, New York, NY 10005, USA"
+    )
+
+api_key = st.secrets.api_key
+url = "https://maps.googleapis.com/maps/api/geocode/json"
+
+pickup_params = {
+    "address": pickup_address,
+    "key": api_key
+}
+
+dropoff_params = {
+    "address": dropoff_address,
+    "key": api_key
+}
+
+pickup_response = requests.get(url, pickup_params)
+dropoff_response = requests.get(url, dropoff_params)
+
 pickup_datetime = st.date_input(
-    "Pick-up time",
+    "Pick-up date: ",
     datetime.date(2014, 7, 6))
-pickup_longitude = st.number_input(
-    "Pick-up longitude",
-    value=-73.950655
-    )
-pickup_latitude = st.number_input(
-    "Pick-up latitude",
-    value=40.783282
-    )
-dropoff_longitude = st.number_input(
-    "Dropoff longitude",
-    value=-73.984365)
-dropoff_latitude = st.number_input(
-    "Dropoff latitude",
-    value=40.769802
-    )
+pickup_longitude = pickup_response.json()["results"][0]["geometry"]["location"]["lng"]
+pickup_latitude = pickup_response.json()["results"][0]["geometry"]["location"]["lat"]
+dropoff_longitude = dropoff_response.json()["results"][0]["geometry"]["location"]["lng"]
+dropoff_latitude = dropoff_response.json()["results"][0]["geometry"]["location"]["lat"]
 passenger_count = st.number_input(
-    "Passenger count",
+    "Passenger count: ",
     min_value=1,
     max_value=8,
     value=1,
