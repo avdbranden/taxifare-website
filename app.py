@@ -1,8 +1,13 @@
 import streamlit as st
 import requests
-import datetime
+import datetime as dt
 import pandas as pd
-import numpy as np
+
+st.set_page_config(
+    page_title="The super duper fare prediction website",
+    page_icon="🚕",
+    layout="centered",
+    initial_sidebar_state="auto") # collapsed
 
 pickup_address = st.text_input(
     "Pick-up address: ",
@@ -32,16 +37,24 @@ dropoff_response = requests.get(url, dropoff_params)
 
 pickup_datetime = st.date_input(
     "Pick-up date: ",
-    datetime.date(2014, 7, 6))
+    dt.date(2014, 7, 6)
+    )
+pickup_hour = st.time_input(
+    "Pick-up time: ",
+    dt.time(8, 45)
+    )
+pickup_time= f"{pickup_datetime} {pickup_hour}"
+
 pickup_longitude = pickup_response.json()["results"][0]["geometry"]["location"]["lng"]
 pickup_latitude = pickup_response.json()["results"][0]["geometry"]["location"]["lat"]
 dropoff_longitude = dropoff_response.json()["results"][0]["geometry"]["location"]["lng"]
 dropoff_latitude = dropoff_response.json()["results"][0]["geometry"]["location"]["lat"]
-passenger_count = st.number_input(
+
+passenger_count = st.slider(
     "Passenger count: ",
     min_value=1,
     max_value=8,
-    value=1,
+    value=2,
     step=1,
     format="%d"
     )
@@ -55,12 +68,10 @@ def get_map_data():
     return df
 
 if st.button('Get fare'):
-    # print is visible in the server output, not in the page
-    st.balloons()
     st.write('Here is your fare 🎉')
     url = 'https://taxifare-292355993838.europe-west1.run.app/predict'
     params = {
-        "pickup_datetime": pickup_datetime ,
+        "pickup_datetime": pickup_time,
         "pickup_longitude": pickup_longitude,
         "pickup_latitude": pickup_latitude,
         "dropoff_longitude": dropoff_longitude,
@@ -68,8 +79,10 @@ if st.button('Get fare'):
         "passenger_count": passenger_count
     }
     response = requests.get(url, params)
+    print(response.url)
     fare_amount = response.json()
     st.write(f"{round(fare_amount['fare'], 2)} $")
-    st.write("Check your journey")
+    st.balloons()
+    st.text("Check your journey 👇")
     df = get_map_data()
     st.map(df)
