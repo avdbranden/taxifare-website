@@ -83,6 +83,6 @@ if st.button('Get fare'):
     fare_amount = response.json()
     st.write(f"{round(fare_amount['fare'], 2)} $")
     st.balloons()
-    st.text("Check your journey 👇 ")
+    st.text("Check your journey 👇")
     df = get_map_data()
     st.map(df)
