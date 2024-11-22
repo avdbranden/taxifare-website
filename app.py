@@ -81,7 +81,7 @@ if st.button('Get fare'):
     response = requests.get(url, params)
     print(response.url)
     fare_amount = response.json()
-    st.write(f"{round(fare_amount['fare'], 2)} $")
+    st.write(f"{round(fare_amount['fare'], 2)} $ ")
     st.balloons()
     st.text("Check your journey 👇")
     df = get_map_data()
